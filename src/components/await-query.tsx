@@ -1,35 +1,49 @@
 import {
+  OmitKeyof,
   QueryClient,
-  type QueryOptions,
+  QueryFunction,
+  UseQueryOptions,
   useSuspenseQuery,
-  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 import React, { Suspense } from "react";
 
-type ChildrenType = {
-  data: any;
-  invalidate?: () => Promise<void>;
+type PromiseProps<T> = {
+  queryClient?: QueryClient;
+  queryOption: OmitKeyof<UseQueryOptions<T, Error, T, string[]>, "queryFn"> & {
+    queryFn?: QueryFunction<T, string[], never>;
+  };
+  children: ({
+    data,
+    invalidate,
+  }: {
+    data: UseSuspenseQueryResult<T, Error> | null;
+    invalidate?: () => void;
+  }) => React.ReactNode;
 };
 
-type PromiseProps = {
-  children: (props: ChildrenType) => React.ReactNode;
-  queryOption: () => QueryOptions<any, Error, any, string[]>;
-  queryClient: QueryClient;
+type AwaitQueryProps<T> = {
   fallback?: React.ReactNode;
-};
+} & PromiseProps<T>;
 
-const Promise = ({ children, queryOption, queryClient }: PromiseProps) => {
-  const qOpt = queryOption();
-  const data = useSuspenseQuery(qOpt as UseSuspenseQueryOptions);
+const Promise = <T,>({
+  children,
+  queryOption,
+  queryClient,
+}: PromiseProps<T>) => {
+  const data = useSuspenseQuery(queryOption);
 
   const invalidate = () => {
-    return queryClient.invalidateQueries({ queryKey: qOpt.queryKey });
+    return queryClient!.invalidateQueries({ queryKey: queryOption.queryKey });
   };
-
-  return children({ data, invalidate });
+  data.data;
+  return children({
+    data,
+    invalidate,
+  });
 };
 
-const AwaitQuery = ({ fallback, ...props }: PromiseProps) => {
+const AwaitQuery = <T,>({ fallback, ...props }: AwaitQueryProps<T>) => {
   return (
     <Suspense fallback={fallback || props.children({ data: null })}>
       <Promise {...props} />
