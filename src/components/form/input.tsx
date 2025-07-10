@@ -5,14 +5,16 @@ import {
   useFormContext,
 } from "react-hook-form";
 
-type Props = {} & FieldValues;
+type Props = {
+  required?: boolean;
+} & FieldValues;
 
-const Input = ({ name }: Props) => {
+const Input = ({ name, required }: Props) => {
   const { control } = useFormContext();
   const { field, formState } = useController({
     name,
     control,
-    rules: { required: true },
+    rules: { required },
   });
 
   return (
