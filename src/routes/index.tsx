@@ -5,11 +5,14 @@ import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { data as _data, chartData } from "~/utils/users";
 import { postLoader } from "~/utils/posts";
+import { newCustomerOption, totalRevenueQueryOption } from "~/lib/queries";
 
 export const Route = createFileRoute("/")({
   component: Home,
-  loader: async () => {
+  loader: async ({ context }) => {
     const deferredPost = postLoader();
+    // context.queryClient.prefetchQuery(totalRevenueQueryOption());
+    // context.queryClient.prefetchQuery(newCustomerOption());
 
     return { deferredPost, data: _data, chartData: chartData };
   },

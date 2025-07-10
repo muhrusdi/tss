@@ -1,6 +1,6 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react";
 
-import { Badge } from "~/components/ui/badge"
+import { Badge } from "~/components/ui/badge";
 import {
   Card,
   CardAction,
@@ -8,55 +8,112 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card"
+} from "~/components/ui/card";
+import AwaitQuery from "./await-query";
+import { useRouteContext } from "@tanstack/react-router";
+import { newCustomerOption, totalRevenueQueryOption } from "~/lib/queries";
+import { LoaderCircle, SplineIcon } from "lucide-react";
+import clsx from "clsx";
 
 export function SectionCards() {
+  const queryClient = useRouteContext({
+    from: "/",
+    select: (c) => c.queryClient,
+  });
+
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +12.5%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Trending up this month <IconTrendingUp className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
-        </CardFooter>
-      </Card>
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>New Customers</CardDescription>
-          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
-          </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingDown />
-              -20%
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Down 20% this period <IconTrendingDown className="size-4" />
-          </div>
-          <div className="text-muted-foreground">
-            Acquisition needs attention
-          </div>
-        </CardFooter>
-      </Card>
+      <AwaitQuery
+        queryClient={queryClient}
+        queryOption={totalRevenueQueryOption}
+      >
+        {({ data, invalidate }) => (
+          <Card
+            className={clsx(
+              "@container/card",
+              !data?.data ? "[&>*]:blur-sm" : ""
+            )}
+          >
+            <CardHeader>
+              <CardDescription>Total Revenue</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {data?.data.price || 0}
+              </CardTitle>
+              <CardAction>
+                <Badge variant="outline">
+                  <IconTrendingUp />
+                  +12.5%
+                </Badge>
+              </CardAction>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              <div className="line-clamp-1 flex gap-2 font-medium">
+                Trending up this month <IconTrendingUp className="size-4" />
+              </div>
+              <div className="text-muted-foreground">
+                <div className="flex justify-between items-center gap-2">
+                  <div>Visitors for the last 6 months</div>
+                  <div>
+                    <button
+                      onClick={invalidate}
+                      className="cursor-pointer flex"
+                    >
+                      <LoaderCircle
+                        size={14}
+                        className={data?.isFetching ? "animate-spin" : ""}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </CardFooter>
+          </Card>
+        )}
+      </AwaitQuery>
+      <AwaitQuery queryClient={queryClient} queryOption={newCustomerOption}>
+        {({ data, invalidate }) => (
+          <Card
+            className={clsx(
+              "@container/card",
+              !data?.data ? "[&>*]:blur-sm" : ""
+            )}
+          >
+            <CardHeader>
+              <CardDescription>New Customers</CardDescription>
+              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+                {data?.data.price || 0}
+              </CardTitle>
+              <CardAction>
+                <Badge variant="outline">
+                  <IconTrendingUp />
+                  +12.5%
+                </Badge>
+              </CardAction>
+            </CardHeader>
+            <CardFooter className="flex-col items-start gap-1.5 text-sm">
+              <div className="line-clamp-1 flex gap-2 font-medium">
+                Trending up this month <IconTrendingUp className="size-4" />
+              </div>
+              <div className="text-muted-foreground">
+                <div className="flex justify-between items-center gap-2">
+                  <div>Visitors for the last 6 months</div>
+                  <div>
+                    <button
+                      onClick={invalidate}
+                      className="cursor-pointer flex"
+                    >
+                      <LoaderCircle
+                        size={14}
+                        className={data?.isFetching ? "animate-spin" : ""}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </CardFooter>
+          </Card>
+        )}
+      </AwaitQuery>
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Active Accounts</CardDescription>
@@ -98,5 +155,5 @@ export function SectionCards() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
