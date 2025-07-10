@@ -131,8 +131,8 @@ const data = {
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
+      name: "Login",
+      url: "/auth/login",
       icon: IconDatabase,
     },
     {
