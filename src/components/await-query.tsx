@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-query";
 import React, { Suspense } from "react";
 
-type PromiseProps<T> = {
+type AwaitQueryProps<T> = {
   queryClient?: QueryClient;
   queryOption: OmitKeyof<UseQueryOptions<T, Error, T, string[]>, "queryFn"> & {
     queryFn?: QueryFunction<T, string[], never>;
@@ -17,26 +17,23 @@ type PromiseProps<T> = {
     data,
     invalidate,
   }: {
-    data: UseSuspenseQueryResult<T, Error> | null;
+    data?: UseSuspenseQueryResult<T, Error> | null;
     invalidate?: () => void;
   }) => React.ReactNode;
-};
-
-type AwaitQueryProps<T> = {
   fallback?: React.ReactNode;
-} & PromiseProps<T>;
+};
 
 const Promise = <T,>({
   children,
   queryOption,
   queryClient,
-}: PromiseProps<T>) => {
+}: AwaitQueryProps<T>) => {
   const data = useSuspenseQuery(queryOption);
 
   const invalidate = () => {
-    return queryClient!.invalidateQueries({ queryKey: queryOption.queryKey });
+    return queryClient?.invalidateQueries({ queryKey: queryOption.queryKey });
   };
-  data.data;
+
   return children({
     data,
     invalidate,

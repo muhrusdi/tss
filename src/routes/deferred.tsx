@@ -1,4 +1,8 @@
-import { createFileRoute, useRouteContext } from "@tanstack/react-router";
+import {
+  Await,
+  createFileRoute,
+  useRouteContext,
+} from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense, useState } from "react";
 

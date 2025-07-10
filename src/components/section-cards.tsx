@@ -58,10 +58,9 @@ export function SectionCards() {
                       onClick={invalidate}
                       className="cursor-pointer flex"
                     >
-                      <LoaderCircle
-                        size={14}
-                        className={data?.isFetching ? "animate-spin" : ""}
-                      />
+                      <div className={data?.isFetching ? "animate-spin" : ""}>
+                        <LoaderCircle size={14} />
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -102,10 +101,9 @@ export function SectionCards() {
                       onClick={invalidate}
                       className="cursor-pointer flex"
                     >
-                      <LoaderCircle
-                        size={14}
-                        className={data?.isFetching ? "animate-spin" : ""}
-                      />
+                      <div className={data?.isFetching ? "animate-spin" : ""}>
+                        <LoaderCircle size={14} />
+                      </div>
                     </button>
                   </div>
                 </div>
