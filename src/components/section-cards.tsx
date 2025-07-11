@@ -54,16 +54,18 @@ export function SectionCards() {
                 <div className="flex justify-between items-center gap-2">
                   <div>Visitors for the last 6 months</div>
                   <div>
-                    {/* <ClientOnly> */}
-                    <button
-                      onClick={invalidate}
-                      className="cursor-pointer flex"
-                    >
-                      <div className={data?.isRefetching ? "animate-spin" : ""}>
-                        <LoaderCircle size={14} />
-                      </div>
-                    </button>
-                    {/* </ClientOnly> */}
+                    <ClientOnly>
+                      <button
+                        onClick={invalidate}
+                        className="cursor-pointer flex"
+                      >
+                        <div
+                          className={data?.isRefetching ? "animate-spin" : ""}
+                        >
+                          <LoaderCircle size={14} />
+                        </div>
+                      </button>
+                    </ClientOnly>
                   </div>
                 </div>
               </div>
