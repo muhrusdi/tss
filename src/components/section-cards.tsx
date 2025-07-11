@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import AwaitQuery from "./await-query";
-import { useRouteContext } from "@tanstack/react-router";
+import { ClientOnly, useRouteContext } from "@tanstack/react-router";
 import { newCustomerOption, totalRevenueQueryOption } from "~/lib/queries";
 import { LoaderCircle, SplineIcon } from "lucide-react";
 import clsx from "clsx";
@@ -54,14 +54,16 @@ export function SectionCards() {
                 <div className="flex justify-between items-center gap-2">
                   <div>Visitors for the last 6 months</div>
                   <div>
+                    {/* <ClientOnly> */}
                     <button
                       onClick={invalidate}
                       className="cursor-pointer flex"
                     >
-                      <div className={data?.isFetching ? "animate-spin" : ""}>
+                      <div className={data?.isRefetching ? "animate-spin" : ""}>
                         <LoaderCircle size={14} />
                       </div>
                     </button>
+                    {/* </ClientOnly> */}
                   </div>
                 </div>
               </div>
@@ -97,14 +99,16 @@ export function SectionCards() {
                 <div className="flex justify-between items-center gap-2">
                   <div>Visitors for the last 6 months</div>
                   <div>
-                    <button
-                      onClick={invalidate}
-                      className="cursor-pointer flex"
-                    >
-                      <div className={data?.isFetching ? "animate-spin" : ""}>
-                        <LoaderCircle size={14} />
-                      </div>
-                    </button>
+                    <ClientOnly>
+                      <button
+                        onClick={invalidate}
+                        className="cursor-pointer flex"
+                      >
+                        <div className={data?.isFetching ? "animate-spin" : ""}>
+                          <LoaderCircle size={14} />
+                        </div>
+                      </button>
+                    </ClientOnly>
                   </div>
                 </div>
               </div>

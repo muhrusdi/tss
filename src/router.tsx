@@ -14,6 +14,7 @@ export function createRouter() {
     defaultErrorComponent: DefaultCatchBoundary,
     defaultNotFoundComponent: () => <NotFound />,
     scrollRestoration: true,
+    defaultPreloadStaleTime: 0,
     context: {
       queryClient,
     },

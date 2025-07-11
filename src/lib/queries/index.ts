@@ -9,6 +9,7 @@ export const totalRevenueQueryOption = queryOptions({
       percent: 12.4,
     };
   },
+  experimental_prefetchInRender: true,
 });
 
 export const newCustomerOption = queryOptions({
