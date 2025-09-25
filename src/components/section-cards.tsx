@@ -14,6 +14,51 @@ import { ClientOnly, useRouteContext } from "@tanstack/react-router";
 import { newCustomerOption, totalRevenueQueryOption } from "~/lib/queries";
 import { LoaderCircle, SplineIcon } from "lucide-react";
 import clsx from "clsx";
+import { Skeleton } from "./ui/skeleton";
+import { UseSuspenseQueryResult } from "@tanstack/react-query";
+
+type PriceCardProps<T> = {
+  data?: T;
+  invalidate?: () => void;
+};
+
+const PriceCard = <T,>({ data, invalidate }: PriceCardProps<T>) => {
+  return (
+    <Card className={clsx("@container/card flex flex-col justify-between")}>
+      <CardHeader>
+        <CardDescription>Total Revenue</CardDescription>
+        <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          {data?.data.price || <Skeleton className="w-32" />}
+        </CardTitle>
+        <CardAction>
+          <Badge variant="outline">
+            <IconTrendingUp />
+            {data?.data.price ? "+12.5%" : <Skeleton className="w-8" />}
+          </Badge>
+        </CardAction>
+      </CardHeader>
+      <CardFooter className="flex-col items-start gap-1.5 text-sm">
+        <div className="line-clamp-1 flex gap-2 font-medium">
+          Trending up this month <IconTrendingUp className="size-4" />
+        </div>
+        <div className="text-muted-foreground">
+          <div className="flex justify-between items-center gap-2">
+            <div>Visitors for the last 6 months</div>
+            <div>
+              <ClientOnly>
+                <button onClick={invalidate} className="cursor-pointer flex">
+                  <div className={data?.isRefetching ? "animate-spin" : ""}>
+                    <LoaderCircle size={14} />
+                  </div>
+                </button>
+              </ClientOnly>
+            </div>
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
 
 export function SectionCards() {
   const queryClient = useRouteContext({
@@ -28,94 +73,12 @@ export function SectionCards() {
         queryOption={totalRevenueQueryOption}
       >
         {({ data, invalidate }) => (
-          <Card
-            className={clsx(
-              "@container/card",
-              !data?.data ? "[&>*]:blur-sm" : ""
-            )}
-          >
-            <CardHeader>
-              <CardDescription>Total Revenue</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {data?.data.price || 0}
-              </CardTitle>
-              <CardAction>
-                <Badge variant="outline">
-                  <IconTrendingUp />
-                  +12.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className="flex-col items-start gap-1.5 text-sm">
-              <div className="line-clamp-1 flex gap-2 font-medium">
-                Trending up this month <IconTrendingUp className="size-4" />
-              </div>
-              <div className="text-muted-foreground">
-                <div className="flex justify-between items-center gap-2">
-                  <div>Visitors for the last 6 months</div>
-                  <div>
-                    <ClientOnly>
-                      <button
-                        onClick={invalidate}
-                        className="cursor-pointer flex"
-                      >
-                        <div
-                          className={data?.isRefetching ? "animate-spin" : ""}
-                        >
-                          <LoaderCircle size={14} />
-                        </div>
-                      </button>
-                    </ClientOnly>
-                  </div>
-                </div>
-              </div>
-            </CardFooter>
-          </Card>
+          <PriceCard data={data} invalidate={invalidate} />
         )}
       </AwaitQuery>
       <AwaitQuery queryClient={queryClient} queryOption={newCustomerOption}>
         {({ data, invalidate }) => (
-          <Card
-            className={clsx(
-              "@container/card",
-              !data?.data ? "[&>*]:blur-sm" : ""
-            )}
-          >
-            <CardHeader>
-              <CardDescription>New Customers</CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-                {data?.data.price || 0}
-              </CardTitle>
-              <CardAction>
-                <Badge variant="outline">
-                  <IconTrendingUp />
-                  +12.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className="flex-col items-start gap-1.5 text-sm">
-              <div className="line-clamp-1 flex gap-2 font-medium">
-                Trending up this month <IconTrendingUp className="size-4" />
-              </div>
-              <div className="text-muted-foreground">
-                <div className="flex justify-between items-center gap-2">
-                  <div>Visitors for the last 6 months</div>
-                  <div>
-                    <ClientOnly>
-                      <button
-                        onClick={invalidate}
-                        className="cursor-pointer flex"
-                      >
-                        <div className={data?.isFetching ? "animate-spin" : ""}>
-                          <LoaderCircle size={14} />
-                        </div>
-                      </button>
-                    </ClientOnly>
-                  </div>
-                </div>
-              </div>
-            </CardFooter>
-          </Card>
+          <PriceCard data={data} invalidate={invalidate} />
         )}
       </AwaitQuery>
       <Card className="@container/card">
